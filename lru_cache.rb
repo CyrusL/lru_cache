@@ -59,9 +59,9 @@ class LruCache
   class Node
     attr_accessor :next_node, :prev_node, :value, :key
 
-    def initialize(key, data, next_node, prev_node)
+    def initialize(key, value, next_node, prev_node)
       @key = key
-      @value = data
+      @value = value
       @next_node = next_node
       @prev_node = prev_node
     end
