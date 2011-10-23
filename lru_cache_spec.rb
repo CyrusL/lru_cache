@@ -29,4 +29,12 @@ describe "lru cache" do
     cache.get("k2").should be_nil
   end
 
+  it "should return value that just added" do
+    cache.put("k1", "v1")
+    cache.put("k2", "v2")
+    cache.get("k1")
+    cache.put("k3", "v3")
+    cache.get("k3").should == "v3"
+  end
+
 end
