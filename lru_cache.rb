@@ -27,45 +27,45 @@ class LruCache
     @items[@lru_list.head.key] = nil
     @lru_list.remove_head
   end
-  
-end
 
-class DoubleLinkedList
-  attr_accessor :head, :tail
+  class DoubleLinkedList
+    attr_accessor :head, :tail
 
-  def initialize
-    @head = nil
-    @tail = nil
+    def initialize
+      @head = nil
+      @tail = nil
+    end
+
+    def add_node(k, v)
+      node = Node.new(k, v, @tail, nil)
+      @head = node unless @head
+      @tail.next_node = node if @tail
+      @tail = node
+      return node
+    end
+
+    def remove_node(node)
+      node.prev_node.next_node = node.next_node if node.prev_node
+      node.next_node.prev_node = node.prev_node if node.next_node
+      @head = node.next_node if @head == node
+    end
+
+    def remove_head
+      remove_node(head)
+    end
+
   end
 
-  def add_node(k, v)
-    node = Node.new(k, v, @tail, nil)
-    @head = node unless @head
-    @tail.next_node = node if @tail
-    @tail = node
-    return node
-  end
+  class Node
+    attr_accessor :next_node, :prev_node, :value, :key
 
-  def remove_node(node)
-    node.prev_node.next_node = node.next_node if node.prev_node
-    node.next_node.prev_node = node.prev_node if node.next_node
-    @head = node.next_node if @head == node
-  end
+    def initialize(key, data, next_node, prev_node)
+      @key = key
+      @value = data
+      @next_node = next_node
+      @prev_node = prev_node
+    end
 
-  def remove_head
-    remove_node(head)
-  end
-
-end
-
-class Node
-  attr_accessor :next_node, :prev_node, :value, :key
-
-  def initialize(key, data, next_node, prev_node)
-    @key = key
-    @value = data
-    @next_node = next_node
-    @prev_node = prev_node
   end
 
 end
