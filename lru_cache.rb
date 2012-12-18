@@ -1,72 +1,72 @@
 class LruCache
-
-  def initialize(capacity=2)
-    @items = Hash.new
+  def initialize(capacity)
+    @items    = Hash.new
     @capacity = capacity
     @lru_list = DoubleLinkedList.new
   end
 
   def put(k,v)
     if @items.size == @capacity
-      evict_last_recent_used_item
+      evist_last_recently_used
     end
-    node = @lru_list.add_node(k, v)
+    node = @lru_list.add(k, v)
     @items[k] = node
   end
 
   def get(k)
     node = @items[k]
     return nil unless node
-    @lru_list.remove_node(node)
-    @lru_list.add_node(node.key, node.value)
-    node.value
+    @lru_list.change_mru(node)
+    node.data
   end
 
   private
-  def evict_last_recent_used_item
-    @items[@lru_list.head.key] = nil
-    @lru_list.remove_head
+  def evist_last_recently_used
+    @items[@lru_list.lru.key] = nil
+    @lru_list.remove_lru
   end
 
   class DoubleLinkedList
-    attr_accessor :head, :tail
+    attr_accessor :lru, :mru
 
     def initialize
-      @head = nil
-      @tail = nil
+      @lru = nil
+      @mru = nil
     end
 
-    def add_node(k, v)
-      node = Node.new(k, v, @tail, nil)
-      @head = node unless @head
-      @tail.next_node = node if @tail
-      @tail = node
-      return node
+    def change_mru(node)
+      remove_node(node)
+      add(node.key, node.data)
     end
 
+    def add(k, v)
+      node = Node.new(k, v, @mru, nil)
+      @lru = node unless lru
+      @mru.older = node if mru
+      @mru = node
+    end
+
+    def remove_lru
+      remove_node(lru)
+    end
+
+    private
     def remove_node(node)
-      node.prev_node.next_node = node.next_node if node.prev_node
-      node.next_node.prev_node = node.prev_node if node.next_node
-      @head = node.next_node if @head == node
+      node.newer.older = node.older if node.newer
+      node.older.newer = node.newer if node.older
+      @lru = node.older if @lru == node
     end
-
-    def remove_head
-      remove_node(head)
-    end
-
   end
 
   class Node
-    attr_accessor :next_node, :prev_node, :value, :key
+    attr_accessor :older, :newer, :data, :key
 
-    def initialize(key, value, next_node, prev_node)
-      @key = key
-      @value = value
-      @next_node = next_node
-      @prev_node = prev_node
+    def initialize(key, data, older, newer)
+      @key  = key
+      @data = data
+      @older = older
+      @newer = newer
     end
-
   end
-
 end
 
