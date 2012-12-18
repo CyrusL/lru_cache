@@ -7,7 +7,7 @@ class LruCache
 
   def put(k,v, ttl=nil)
     remove_key_if_present(k)
-    if @items.size == @capacity
+    if @items.size >= @capacity
       evist_last_recently_used
     end
     expired_at = ttl ?  Time.now + ttl : nil
