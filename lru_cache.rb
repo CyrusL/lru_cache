@@ -17,7 +17,7 @@ class LruCache
     node = @items[k]
     return nil unless node
     @lru_list.change_mru(node)
-    node.data
+    return node.data
   end
 
   private

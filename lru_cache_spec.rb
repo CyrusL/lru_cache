@@ -35,4 +35,10 @@ describe "lru cache" do
     cache.put("k3", "v3")
     cache.get("k3").should == "v3"
   end
+
+  it 'return nil for key it does not know' do
+    cache.put("k1", "v1")
+    cache.put("k2", "v2")
+    cache.get('k3').should be_nil
+  end
 end
