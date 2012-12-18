@@ -7,5 +7,6 @@ Gem::Specification.new "lru_cache", '0.1' do |s|
   s.summary     = %q{LRU cache}
   s.description = %Q{#{s.summary}}
   s.require_path= ["lib"] 
+  s.add_development_dependency("rake")
   s.add_development_dependency("rspec")
 end
