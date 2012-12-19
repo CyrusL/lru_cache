@@ -6,12 +6,15 @@ describe "lru cache load test" do
 
   class CachedValue; end
 
-  class CacheKey; end
-
   it "does not have memory leak" do
-    10.times do
-      cache.put(CacheKey.new, CachedValue.new)
+    10.times do |i|
+      cache.put(i, CachedValue.new)
     end
+
+    10.times do |i|
+      cache.get(i)
+    end
+
     expect { GC.start }.to change{ ObjectSpace.each_object(CachedValue){} }
   end
 end

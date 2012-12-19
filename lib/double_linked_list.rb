@@ -7,6 +7,7 @@ class DoubleLinkedList
   end
 
   def change_head(node)
+    return node if head == node
     remove_node(node)
     add(node.key, node.data, node.expired_at)
   end
