@@ -5,14 +5,21 @@ class LruCache
     @lru_list = DoubleLinkedList.new
   end
 
+  def size
+    @items.size
+  end
+
+  def items
+    @items
+  end
+
   def put(k,v, ttl=nil)
     remove_key_if_present(k)
     if @items.size >= @capacity
       evist_last_recently_used
     end
     expired_at = ttl ?  Time.now + ttl : nil
-    new_node = @lru_list.add(k, v, expired_at)
-    @items[k] = new_node
+    @items[k] = @lru_list.add(k, v, expired_at)
   end
 
   def get(k)
@@ -23,13 +30,13 @@ class LruCache
       return nil
     end
     @lru_list.change_mru(node)
+    @items[k] = @lru_list.mru
     return node.data
   end
 
   private
   def evist_last_recently_used
-    @items[@lru_list.lru.key] = nil
-    @lru_list.remove_lru
+    @lru_list.remove_node @items.delete(@lru_list.lru.key)
   end
 
   def remove_key_if_present(k)
@@ -54,19 +61,19 @@ class LruCache
 
     def add(k, v, expired_at)
       node = Node.new(k, v, @mru, nil, expired_at)
-      @lru = node unless lru
-      @mru.older = node if mru
+      set_lru(node) unless lru
+      @mru.newer = node if mru
       @mru = node
-    end
-
-    def remove_lru
-      remove_node(lru)
     end
 
     def remove_node(node)
       node.newer.older = node.older if node.newer
       node.older.newer = node.newer if node.older
-      @lru = node.older if @lru == node
+      set_lru(node.newer) if @lru == node
+    end
+
+    def set_lru(node)
+      @lru = node
     end
   end
 
@@ -82,8 +89,11 @@ class LruCache
     end
 
     def expired?
-      return false unless @expired_at
-      return Time.now >= @expired_at
+      @expired_at && Time.now >= @expired_at
+    end
+
+    def inspect
+      "Node #{key}"
     end
   end
 end

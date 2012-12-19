@@ -27,6 +27,9 @@ describe "lru cache" do
     cache.put("k2", "v2")
     cache.get("k1")
     cache.put("k3", "v3")
+    cache.get("k3").should == "v3"
+    cache.get("k1").should == "v1"
+    cache.get("k1").should == "v1"
     cache.get("k2").should be_nil
   end
 
