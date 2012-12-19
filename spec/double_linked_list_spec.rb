@@ -86,11 +86,11 @@ describe DoubleLinkedList do
           end
 
           it 'changes head' do
-            new_head = list.change_head(@second)
+            list.promote_to_head(@second)
             list.size.should == 3
             list.head.key.should == @second.key
             @first.right.should == @third
-            @third.right.should == new_head
+            @third.right.should == @second
           end
         end
       end

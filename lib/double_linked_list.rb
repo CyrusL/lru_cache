@@ -6,17 +6,16 @@ class DoubleLinkedList
     @head = nil
   end
 
-  def change_head(node)
+  def promote_to_head(node)
     return node if head == node
     remove_node(node)
-    add(node.key, node.data, node.expired_at)
+    node.left = head
+    set_head(node)
   end
 
   def add(k, v, expired_at)
     node = Node.new(k, v, @head, nil, expired_at)
-    set_tail(node) unless tail
-    @head.right = node if head
-    @head = node
+    set_head(node)
   end
 
   def remove_node(node)
@@ -24,6 +23,7 @@ class DoubleLinkedList
     node.left.right = node.right if node.left
     set_tail(node.right) if @tail == node
     @head = node.left    if @head == node
+    node.left, node.right = nil, nil
   end
 
   def size
@@ -38,6 +38,13 @@ class DoubleLinkedList
 
   def set_tail(node)
     @tail = node
+  end
+
+  private
+  def set_head(new_head)
+    set_tail(new_head) unless tail
+    @head.right = new_head if head
+    @head = new_head
   end
 
   class Node

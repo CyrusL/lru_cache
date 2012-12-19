@@ -26,7 +26,7 @@ class LruCache
       remove_key_if_present(k)
       return not_found
     else
-      items[k] = list.change_head(hit)
+      list.promote_to_head(hit)
       return hit.data
     end
   end
